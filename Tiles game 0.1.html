@@ -1,0 +1,335 @@
+<html>
+    <body>
+        <canvas id="My Game Space" width="500" height="500"  ></canvas>
+            <script>
+                
+                var g_Canvas = document.getElementById("My Game Space");
+                var g_Context = g_Canvas.getContext("2d");
+                
+                var g_FrameRate = 30;
+                var g_TravelInterval = 1000/g_FrameRate;
+                
+                var TileArray = [];
+                
+                var g_Time = 0;
+                var g_Moves = 0;
+                
+                var g_TimerOnFlag =0;
+                var g_Milisec = 0;
+                var g_Sec = 0;
+                var g_Mins = 0;
+                
+                
+                var g_CanvasImage = new Image();
+                g_CanvasImage.src = "BG.png";
+                
+                
+                /*class C_BackGround
+                    {
+                        constructor(l_x,l_y,l_s)
+                        {
+                            this.BgXpos = l_x;
+                            this.BgYpos = l_y;
+                            this.BgSize = l_s;
+                        }
+                        
+                        M_DrawBackGround(l_context)
+                        {
+                            l_Context.strokeRect(this.BgXpos,this.BgYpos,this.BgSize,this.BgSize);
+                        }
+                    }
+                var g_BgXpos = 10;
+                var g_BgYpos = 10;
+                var g_BgSize = 500;*/
+                
+                class C_SquareTile
+                    {
+                        constructor(l_x,l_y,l_s,l_n,l_color)
+                        {
+                            this.SquareXpos = l_x;
+                            this.SquareYpos = l_y;
+                            this.SquareSize = l_s;
+                            this.Number = l_n;
+                            this.NumberXpos = this.SquareXpos + 20;
+                            this.NumberYpos = this.SquareYpos + 30;
+                          
+                            
+                        }
+                        
+                        M_DrawSquare(l_Context)
+                        {
+                            l_Context.strokeStyle = "black";
+                            
+                            l_Context.strokeRect(this.SquareXpos,this.SquareYpos,this.SquareSize,this.SquareSize);
+                            
+                            
+                            l_Context.font = "20px Calibri";
+                            l_Context.fillStyle = "black";
+                            l_Context.fillText(this.Number,this.NumberXpos,this.NumberYpos);
+                            
+                        }
+                    }
+                
+                 
+                var g_GrisRow = 4;
+                var g_GridCol = 4;
+                var g_StartXpos = 140;
+                var g_StartYpos = 150;
+                var g_TileSize = 50;
+               
+               
+                var g_PuzzlePattern = ["A","B","C","D","E","J","F","H","I","","G","K","M","N","O","L"];
+                var g_OgPuzzlePattern = ["A","B","C","D","E","J","F","H","I","G","K","L","M","N","O",""];
+                //var num = 0;
+                 
+                function f_CreateTile()
+                {
+                    var l_X = g_StartXpos;
+                    var l_Y  = g_StartYpos;
+                    for(var i=0;i<g_GrisRow*g_GridCol;i++)
+                    {
+                        //num++;
+                        
+                        TileArray[i] = new C_SquareTile(l_X,l_Y,g_TileSize,g_PuzzlePattern[i]/*,num*/);
+                        l_X += g_TileSize;
+                        
+                        if((i+1) % g_GridCol == 0)
+                       {
+                            l_X = g_StartXpos;
+                           l_Y += g_TileSize;
+                       }
+                    }
+                }
+                
+                
+                        
+                function f_DrawTiles(l_Context)
+                {
+                    for(var i=0 ; i < TileArray.length; i++)
+                        {
+                            TileArray[i].M_DrawSquare(l_Context);
+                        }
+                }
+           
+                function f_DrawMoves()
+                {
+                    g_Context.font = "30px Calibri";
+                    g_Context.fillStyle = "Black";
+                    g_Context.fillText(" MOVES : " + g_Moves ,170,50);
+                }
+                
+//                 function f_DrawScore()
+//                {
+//                    g_Context.font = "30px Calibri";
+//                    g_Context.fillStyle = "Black";
+//                    g_Context.fillText(" TIME : " + /*g_Time*/ g_Mins+ ":" + g_Sec ,10,50);
+//                }
+//            
+                function f_ClerScreen()
+                {
+                    
+                    g_Context.clearRect(0,0,g_Canvas.width,g_Canvas.height);
+
+                    g_Context.strokeRect(0,0,g_Canvas.width,g_Canvas.height);
+                    g_Context.drawImage(g_CanvasImage,0,0,g_Canvas.width,g_Canvas.height);
+                }
+                
+              /*   function f_TimeCounter()
+                  {
+                     if(g_TimerOnFlag == 1)
+                          {
+                              g_Time +=1;
+                              g_Time++;
+                             g_Milisec += 30
+                              if(g_Milisec == 900)
+                                  {
+                                      g_Milisec = 0;
+                                      g_Sec++;
+                                  }
+                              if(g_Sec == 60)
+                                  {
+                                      g_Sec = 0;
+                                      g_Sec++;
+                                      g_Mins++;
+
+                                  }
+                          }
+                  }
+                */
+                
+            /*  function f_Gameover()
+              {
+                 if(g_PuzzlePattern == g_OgPuzzlePattern)
+                    {
+                        g_Ctx.font = "50px calibri";
+                        g_Ctx.fillText("NEXT LEVEL " ,250,300)
+                        console.log("12345");
+                    }   
+
+              }
+                */
+
+                
+                function f_GameLoop()
+                {
+                    
+                    //f_TimeCounter();
+                    //clearScreen
+                    f_ClerScreen();
+                   
+                    
+                    
+                    /*f_Gameover();*/
+                    f_DrawTiles(g_Context);
+                    //f_DrawScore();
+                    f_DrawMoves();
+                    
+                    
+                    
+                     
+                }
+                
+                
+                
+                function f_ClickTOMoveTilesEventHandler(l_Event)
+                {
+                   
+                    for(var i = 0; i < TileArray.length; i++)
+                        {
+                            
+                            if(l_Event.clientX > TileArray[i].SquareXpos && 
+                               l_Event.clientX <= (TileArray[i].SquareXpos + TileArray[i].SquareSize) &&
+                               l_Event.clientY > TileArray[i].SquareYpos && 
+                               l_Event.clientY <= (TileArray[i].SquareYpos +TileArray[i].SquareSize))
+
+                                {
+                                    console.log(TileArray.indexOf(TileArray[i]) + " " + TileArray[i].Number + " " + "ok");
+                                    f_NearByIndex(i,/*g_GridCol,g_GrisRow,Number*/);
+                                    g_TimerOnFlag =1;
+                                    f_SwappingIndex(i);
+                                    break;
+                                }
+                        }
+                    
+                }
+                
+            
+                
+                function f_NearByIndex(l_i/*,l_GridCol,l_GrisRow,l_number*/)
+                    
+                {
+                     g_LeftIndex = l_i -1;
+                     g_RightIndex = l_i + 1;
+                     g_TopIndex = l_i - g_GridCol;
+                     g_DownIndex = l_i + g_GridCol;
+                    
+                     if(g_LeftIndex<0 || g_LeftIndex>(g_GridCol*g_GrisRow-1)||l_i%g_GridCol==0)
+                        {
+                            g_LeftIndex= null;
+                            console.log("left:"+g_LeftIndex);
+                        }
+                    else
+                        {
+                            console.log("left:"+TileArray[g_LeftIndex].Number);
+                        }
+                    if(g_RightIndex<0 || g_RightIndex>(g_GridCol*g_GrisRow-1)||(l_i+1)%g_GridCol==0)
+                        {
+                            g_RightIndex= null;
+                            console.log("right:"+g_RightIndex);
+                        }
+                    else
+                        {
+                            console.log("right:"+TileArray[g_RightIndex].Number);
+                        }
+                    if(g_TopIndex<0 || g_TopIndex>(g_GridCol*g_GrisRow-1))
+                        {
+                            g_TopIndex= null;
+                            console.log("up:"+g_TopIndex);
+                        }
+                    else
+                        {
+                            console.log("top:"+TileArray[g_TopIndex].Number);
+                        }
+                    if(g_DownIndex<0 || g_DownIndex>(g_GridCol*g_GrisRow-1))
+                        {
+                            g_DownIndex= null;
+                            console.log("down:"+g_DownIndex);
+                        }
+                    else
+                        {
+                            console.log("down:"+TileArray[g_DownIndex].Number);
+                        }
+                    
+              
+                    
+                }
+                
+                function f_SwappingIndex(l_i)
+                {
+                     if(g_LeftIndex != null)
+                   {
+
+                       console.log("swap"+g_LeftIndex);
+                       if(TileArray[g_LeftIndex].Number == "")
+                           {
+                               var swap = TileArray[l_i].Number;
+                               TileArray[l_i].Number = TileArray[g_LeftIndex].Number;
+                               TileArray[g_LeftIndex].Number = swap ;
+                               g_Moves++;
+
+                           }
+                   }
+                    
+                      if(g_RightIndex != null)
+                   {
+
+                       console.log("swap"+g_RightIndex);
+                       if(TileArray[g_RightIndex].Number == "")
+                           {
+                               var swap = TileArray[l_i].Number;
+                               TileArray[l_i].Number = TileArray[g_RightIndex].Number;
+                               TileArray[g_RightIndex].Number = swap ;
+                               g_Moves++;
+
+                           }
+                   }
+                    
+                      if(g_TopIndex != null)
+                   {
+
+                       console.log("swap"+g_TopIndex);
+                       if(TileArray[g_TopIndex].Number == "")
+                           {
+                               var swap = TileArray[l_i].Number;
+                               TileArray[l_i].Number = TileArray[g_TopIndex].Number;
+                               TileArray[g_TopIndex].Number = swap ;
+                               g_Moves++;
+
+                           }
+                   }
+                    
+                      if(g_DownIndex != null)
+                   {
+
+                       console.log("swap"+g_DownIndex);
+                       if(TileArray[g_DownIndex].Number == "")
+                           {
+                               var swap = TileArray[l_i].Number;
+                               TileArray[l_i].Number = TileArray[g_DownIndex].Number;
+                               TileArray[g_DownIndex].Number = swap ;
+                               g_Moves++;
+
+                           }
+                   }
+                }
+                  
+               
+                f_CreateTile();
+                
+                var SetIntervalID = setInterval(f_GameLoop,g_TravelInterval);
+                    
+                window.addEventListener("mousedown",f_ClickTOMoveTilesEventHandler);
+               
+            </script>
+    </body>
+</html>
